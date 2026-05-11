@@ -30,6 +30,21 @@ class A2ATTaskPromptRendererTest(unittest.TestCase):
         self.assertNotIn("language:", prompt_text)
         self.assertNotIn("---", prompt_text)
 
+    def test_render_supports_double_braced_placeholders(self) -> None:
+        from a2a_t.prompt.task_rendering import TaskPromptRenderer
+
+        renderer = TaskPromptRenderer()
+        prompt_text = renderer.render(
+            template_text="通知主题：{{通知主题}}\n订阅条件：{{订阅条件}}",
+            slots={"通知主题": "Incident", "订阅条件": "严重告警"},
+            scenario_code="subscribe_incident",
+            language="zh-CN",
+            version="0.0.1",
+            description="用于订阅故障事件。",
+        )
+
+        self.assertEqual(prompt_text, "通知主题：Incident\n订阅条件：严重告警")
+
     def test_render_raises_when_template_references_unknown_slot(self) -> None:
         from a2a_t.prompt.task_rendering import TaskPromptRenderError
         from a2a_t.prompt.task_rendering import TaskPromptRenderer
