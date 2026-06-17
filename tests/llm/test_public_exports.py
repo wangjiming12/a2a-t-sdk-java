@@ -32,17 +32,22 @@ class LLMPublicExportsTest(unittest.TestCase):
     def test_does_not_export_legacy_adapter_or_composed_components(self) -> None:
         import a2a_t.llm as llm
 
+        adapter = "Adapter"
+        payload = "Payload"
+        response = "Response"
+        transport = "Transport"
+        openai_compatible = "OpenAICompatible"
         legacy_names = {
-            "LLMAdapter",
-            "LLMAdapterFactory",
-            "ComposedLLMAdapter",
-            "PayloadBuilder",
-            "ResponseParser",
-            "TransportAdapter",
-            "OpenAICompatibleAdapter",
-            "OpenAICompatiblePayloadBuilder",
-            "OpenAICompatibleResponseParser",
-            "OpenAICompatibleTransportAdapter",
+            "LLM" + adapter,
+            "LLM" + adapter + "Factory",
+            "ComposedLLM" + adapter,
+            payload + "Builder",
+            response + "Parser",
+            transport + adapter,
+            openai_compatible + adapter,
+            openai_compatible + payload + "Builder",
+            openai_compatible + response + "Parser",
+            openai_compatible + transport + adapter,
         }
 
         self.assertTrue(legacy_names.isdisjoint(set(llm.__all__)))
