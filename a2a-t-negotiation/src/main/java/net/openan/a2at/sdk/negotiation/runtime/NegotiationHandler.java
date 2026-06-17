@@ -3,6 +3,8 @@ package net.openan.a2at.sdk.negotiation.runtime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import net.openan.a2at.sdk.negotiation.handler.Negotiation;
 import net.openan.a2at.sdk.negotiation.runtime.impl.NegotiationPayloadMapper;
 import net.openan.a2at.sdk.negotiation.runtime.impl.NegotiationRuntime;
 import net.openan.a2at.sdk.negotiation.store.NegotiationStore;
@@ -47,7 +49,7 @@ public final class NegotiationHandler implements NegotiationHandlerFacade {
      * @param negotiationTypes registered negotiation type handlers
      * @param store negotiation persistence store
      */
-    public NegotiationHandler(Map<NegotiationType, net.openan.a2at.sdk.negotiation.handler.NegotiationHandler> negotiationTypes, NegotiationStore store) {
+    public NegotiationHandler(Map<NegotiationType, Negotiation> negotiationTypes, NegotiationStore store) {
         this.runtime = new NegotiationRuntime(negotiationTypes, store);
         this.store = store;
     }
@@ -125,7 +127,7 @@ public final class NegotiationHandler implements NegotiationHandlerFacade {
      * @since 2026-05
      */
     public static final class Builder {
-        private final Map<NegotiationType, net.openan.a2at.sdk.negotiation.handler.NegotiationHandler> negotiationTypes = new LinkedHashMap<>();
+        private final Map<NegotiationType, Negotiation> negotiationTypes = new LinkedHashMap<>();
 
         private NegotiationStore store;
 
@@ -147,7 +149,7 @@ public final class NegotiationHandler implements NegotiationHandlerFacade {
          * @param handler type handler implementation
          * @return current builder
          */
-        public Builder register(NegotiationType type, net.openan.a2at.sdk.negotiation.handler.NegotiationHandler handler) {
+        public Builder register(NegotiationType type, Negotiation handler) {
             negotiationTypes.put(type, handler);
             return this;
         }

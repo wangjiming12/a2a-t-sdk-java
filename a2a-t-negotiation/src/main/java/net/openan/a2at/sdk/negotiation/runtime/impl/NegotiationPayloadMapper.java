@@ -15,8 +15,6 @@ import net.openan.a2at.sdk.negotiation.types.model.NegotiationType;
  */
 public final class NegotiationPayloadMapper {
 
-    private NegotiationPayloadMapper() {}
-
     public static Map<String, Object> payload(
             NegotiationContext context, String contentText, Map<String, Object> facts) {
         Map<String, Object> payload = new LinkedHashMap<>();

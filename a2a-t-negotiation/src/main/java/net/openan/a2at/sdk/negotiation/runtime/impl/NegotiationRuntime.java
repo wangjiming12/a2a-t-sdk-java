@@ -8,7 +8,7 @@ import net.openan.a2at.sdk.negotiation.types.model.NegotiationReceiveResult;
 import net.openan.a2at.sdk.negotiation.types.model.NegotiationRecord;
 import net.openan.a2at.sdk.negotiation.types.model.NegotiationStatus;
 import net.openan.a2at.sdk.negotiation.types.model.NegotiationType;
-import net.openan.a2at.sdk.negotiation.handler.NegotiationHandler;
+import net.openan.a2at.sdk.negotiation.handler.Negotiation;
 
 /**
  * Minimal runtime coordinator for one negotiation type.
@@ -19,7 +19,7 @@ public final class NegotiationRuntime {
 
     public static final int MAX_IN_PROGRESS_NEGOTIATION_ROUND = 8;
 
-    private final Map<NegotiationType, NegotiationHandler> negotiationHandlerMap;
+    private final Map<NegotiationType, Negotiation> negotiationHandlerMap;
 
     private final NegotiationStore store;
 
@@ -30,7 +30,7 @@ public final class NegotiationRuntime {
      * @param store negotiation persistence store
      */
     public NegotiationRuntime(
-            Map<NegotiationType, NegotiationHandler> negotiationHandlerMap,
+            Map<NegotiationType, Negotiation> negotiationHandlerMap,
             NegotiationStore store) {
         this.negotiationHandlerMap = negotiationHandlerMap;
         this.store = store;
@@ -70,14 +70,12 @@ public final class NegotiationRuntime {
         if (existing != null && context.round() > existing.context().round() + 1) {
             throw new NegotiationStateException("Incoming negotiation round skips local progress.");
         }
-        // Handler dispatch happens only after all state checks pass so one bad payload cannot
-        // mutate
-        // the local store.
-        NegotiationHandler negotiationHandler = negotiationHandlerMap.get(context.negotiationType());
-        if (negotiationHandler == null) {
+        // Handler dispatch happens only after all state checks pass, so one bad payload cannot mutate the local store.
+        Negotiation negotiation = negotiationHandlerMap.get(context.negotiationType());
+        if (negotiation == null) {
             throw new NegotiationStateException("Unsupported negotiation type: " + context.negotiationType());
         }
-        NegotiationReceiveResult result = negotiationHandler.processReceivedMessage(message, context);
+        NegotiationReceiveResult result = negotiation.processReceivedMessage(message, context);
         store.save(new NegotiationRecord(context, message));
         return result;
     }
