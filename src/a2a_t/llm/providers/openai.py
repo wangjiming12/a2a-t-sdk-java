@@ -25,14 +25,15 @@ class OpenAIClient(LLMClient):
     def __init__(self, config: LLMClientConfig, logger: Any | None = None) -> None:
         if not config.api_key.strip():
             raise LLMConfigError(f"{config.provider} client requires a non-empty api_key")
+        if not config.base_url:
+            raise LLMConfigError(f"{config.provider} client requires a non-empty base_url")
         self._config = config
         self._logger = logger
         client_options: dict[str, Any] = {
             "api_key": config.api_key,
             "timeout": config.timeout_seconds,
+            "base_url": config.base_url,
         }
-        if config.base_url:
-            client_options["base_url"] = config.base_url
         self._client = OpenAI(**client_options)
 
     def structured(

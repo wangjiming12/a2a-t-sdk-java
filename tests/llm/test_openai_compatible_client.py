@@ -15,7 +15,7 @@ SRC_ROOT = PROJECT_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from a2a_t.llm.errors import LLMRuntimeError
+from a2a_t.llm.errors import LLMConfigError, LLMRuntimeError
 from a2a_t.llm.factory import LLMClientFactory
 from a2a_t.llm.models import LLMClientConfig
 from a2a_t.llm.provider import LLMClient
@@ -51,14 +51,22 @@ class OpenAIClientTest(unittest.TestCase):
 
         from a2a_t.llm.providers.openai import OpenAIClient
 
-        client = LLMClientFactory.create("openai", build_config(provider="openai"))
+        client = LLMClientFactory.create("openai", build_config(provider="openai", base_url="https://api.openai.com/v1"))
 
         self.assertIsInstance(client, OpenAIClient)
         self.assertIsInstance(client, LLMClient)
         openai_cls.assert_called_once_with(
             api_key="deepseek-key",
+            base_url="https://api.openai.com/v1",
             timeout=None,
         )
+
+    @patch("a2a_t.llm.providers.openai.OpenAI")
+    def test_factory_rejects_openai_client_without_base_url(self, openai_cls: Mock) -> None:
+        with self.assertRaisesRegex(LLMConfigError, "base_url"):
+            LLMClientFactory.create("openai", build_config(provider="openai"))
+
+        openai_cls.assert_not_called()
 
     @patch("a2a_t.llm.providers.openai.OpenAI")
     def test_structured_forces_json_mode_and_includes_schema_instruction(self, openai_cls: Mock) -> None:
@@ -117,7 +125,7 @@ class OpenAIClientTest(unittest.TestCase):
 
         from a2a_t.llm.providers.openai import OpenAIClient
 
-        client = OpenAIClient(build_config())
+        client = OpenAIClient(build_config(base_url="https://api.deepseek.com"))
 
         with self.assertRaises(LLMRuntimeError):
             client.structured(messages=[{"role": "user", "content": "extract"}], json_schema={"type": "object"})
