@@ -18,10 +18,10 @@ import net.openan.a2at.sdk.negotiation.types.model.*;
 public final class NegotiationHandler {
 
     public static final String NEGOTIATION_CONTEXT_KEY =
-            "https://github.com/a2aproject/telecommunication/extensions/DATA-NEGOTIATION-T/v1";
+            "https://projects.tmforum.org/a2aproject/telecommunication/extensions/DATA-NEGOTIATION-T/v1";
 
     public static final String NEGOTIATION_TEXT_KEY =
-            "https://github.com/a2aproject/telecommunication/extensions/NEGOTIATION-T";
+            "https://projects.tmforum.org/a2aproject/telecommunication/extensions/NEGOTIATION-T";
 
     private final NegotiationRuntime runtime;
 
