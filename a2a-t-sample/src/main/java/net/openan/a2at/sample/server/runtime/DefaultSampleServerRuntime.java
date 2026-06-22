@@ -25,12 +25,6 @@ import org.a2aproject.sdk.server.tasks.InMemoryTaskStore;
 import org.a2aproject.sdk.server.tasks.PushNotificationConfigStore;
 import org.a2aproject.sdk.server.tasks.PushNotificationSender;
 import org.a2aproject.sdk.server.tasks.TaskStore;
-import org.a2aproject.sdk.spec.AgentCapabilities;
-import org.a2aproject.sdk.spec.AgentCard;
-import org.a2aproject.sdk.spec.AgentExtension;
-import org.a2aproject.sdk.spec.AgentInterface;
-import org.a2aproject.sdk.spec.AgentProvider;
-import org.a2aproject.sdk.spec.AgentSkill;
 
 /**
  * Default runtime assembly for the server sample entrypoint.
