@@ -1,12 +1,10 @@
 package net.openan.a2at.sdk.prompt.analysis.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.openan.a2at.sdk.core.exception.SdkException;
+import net.openan.a2at.sdk.core.json.JacksonJsonValueParser;
 import net.openan.a2at.sdk.core.json.JsonValueParser;
 import net.openan.a2at.sdk.core.model.PromptMessage;
 import net.openan.a2at.sdk.llm.LLMClient;
@@ -21,8 +19,6 @@ import net.openan.a2at.sdk.prompt.resources.model.ScenarioDefinition;
  */
 public final class ScenarioRecognizer {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     private final LLMClient llmClient;
 
     private final JsonValueParser parser;
@@ -33,7 +29,7 @@ public final class ScenarioRecognizer {
      * @param llmClient LLM client
      */
     public ScenarioRecognizer(LLMClient llmClient) {
-        this(llmClient, new DefaultJsonValueParser());
+        this(llmClient, new JacksonJsonValueParser());
     }
 
     /**
@@ -107,17 +103,4 @@ public final class ScenarioRecognizer {
                 .toList();
     }
 
-    private static final class DefaultJsonValueParser implements JsonValueParser {
-
-        @Override
-        public Map<String, Object> parseObject(String payload) {
-            try {
-                Map<String, Object> parsed =
-                        OBJECT_MAPPER.readValue(payload, new TypeReference<Map<String, Object>>() {});
-                return parsed == null ? Map.of() : parsed;
-            } catch (Exception error) {
-                throw new SdkException("Structured LLM payload must be a JSON object.", error);
-            }
-        }
-    }
 }
