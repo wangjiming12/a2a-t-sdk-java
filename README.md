@@ -20,7 +20,7 @@ SPDX-License-Identifier: Apache-2.0
 # a2a-t-sdk-java
 
 <p align="center">
-  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.12+-blue.svg" alt="Python"></a>
+  <a href="https://dev.java/"><img src="https://img.shields.io/badge/java-17+-orange.svg" alt="Java"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="License"></a>
 </p>
 
@@ -38,7 +38,7 @@ SPDX-License-Identifier: Apache-2.0
 
 ## Project Overview
 
-`a2a-t-sdk-java` is a java SDK targeting telecom scenarios, used to generate task prompts and handle task negotiation flows.
+`a2a-t-sdk-java` is a Java SDK targeting telecom scenarios, used to generate task prompts and handle task negotiation flows.
 
 This SDK is primarily aimed at two types of users:
 
@@ -47,21 +47,42 @@ This SDK is primarily aimed at two types of users:
 
 ## Core Capabilities
 
-- Task prompt generation pipeline: Covers input normalization, scenario recognition, slot extraction, slot validation, and task prompt rendering.
+- Task prompt generation pipeline: Covers input normalization, scenario recognition, slot extraction, and task prompt rendering.
 - Client API: Provides a task prompt generation result stream, along with negotiation entry points such as `start_negotiation`, `receive_negotiation`, and `continue_negotiation`.
-- Server validation API: Targets `processed task prompts` that conform to the SDK format, performing metadata parsing, slot extraction, and slot validation, with support for optional guardrail hooks.
+- Server validation API: Targets `processed task prompts` that conform to the SDK format, performing metadata parsing, slot extraction.
 - Negotiation types: Includes four built-in negotiation types: `information`, `clarification`, `feasibility`, and `fulfillment`.
-- Resource organization: Built-in prompt resources are located in `package_data/prompt_resources`, containing `prompts`, `scenarios`, `slots`, and `templates`.
+- Resource organization: Built-in prompt resources are located in `a2a-t-resources/src/main/resources/prompt_resources`, containing `prompts`, `scenarios`, `slots`, and `templates`.
+- Built-in example scenario: Currently, the package provides scenarios such as`subscribe_incident`.
 
 ## Project Structure
 
+The repository is organized as a Maven multi-module reactor, with core code under each module's `src/main/java`. The main modules are:
+
+- `a2a-t-bom`: Bill of materials (BOM) that aligns library module versions.
+- `a2a-t-core`: Shared `.env`-driven configuration loading, value types, JSON parsing abstractions, and the exception processing.
+- `a2a-t-resources`: Packaging and classpath loading of built-in prompt resources.
+- `a2a-t-llm`: LLM adapter layer, unified externally as an OpenAI-compatible client.
+- `a2a-t-prompt`: Prompt resource model and loading, scenario recognition, slot extraction, and template rendering.
+- `a2a-t-negotiation`: Negotiation types, runtime state machine, and state storage.
+- `a2a-t-client`: Client facade providing task prompt generation and negotiation entry points.
+- `a2a-t-server`: Server facade providing `processed task prompt` validation and negotiation entry points.
+- `a2a-t-sample`: Runnable client/server sample.
 
 ## Installation and Environment Requirements
 
+- Java requirement: `>=17`
+- Build tool: Maven (no wrapper is bundled; install it locally)
+- Group ID: `net.openan.a2a-t.sdk`
 - License: `Apache-2.0`
+- It is recommended to import `a2a-t-bom` to align module versions:
+
+Before starting, edit `client.env` / `server.env` at the repo root (or refer to `env.example`) and fill in a valid `A2AT_LLM_API_KEY` and other settings.
 
 ## Development and Testing
 
+The project uses a Maven multi-module reactor build, with code formatting unified by `spotless-maven-plugin` (Palantir Java Format) and tests based on JUnit 5 (Jupiter).
+
+Each module's `src/test/java` mirrors the main package structure, covering the negotiation state machine, the four negotiation type handlers, classpath and local-file loaders, prompt rendering, and client/server orchestration. For a runnable end-to-end sample, see `a2a-t-sample` and [a2a-t-sample/README.zh-CN.md](a2a-t-sample/README.zh-CN.md).
 
 ## Current Scope of Support
 
